@@ -186,3 +186,24 @@ footer nav ul {
 	margin: 2em
 }
 
+/* stylisme des boutons*/
+.filters{
+	text-align: center;
+	margin-bottom: 3%;
+}
+.filters > button {
+	border-radius: 60px;
+	padding: 5px 10px;
+	
+}
+.btn-inactive {
+	background: white;
+	border: solid 1px #1D6154;
+	color:#1D6154;
+	
+}
+.btn-active {
+	background:  #1D6154;
+	color:white
+	
+}
