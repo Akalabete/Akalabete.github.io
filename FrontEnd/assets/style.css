@@ -223,11 +223,14 @@ footer nav ul {
 	text-align: center;
 }
 form {
-	margin-top:30px;
+	
 	display: flex;
 	flex-direction: column
 }
-form p {
+.input-group {
+	margin-top:30px;
+	display:flex;
+	flex-direction: column;
 	text-align: left;
 }
 form input{

@@ -26,11 +26,29 @@
     <main>
         <div class="login">
             <h2>Log in</h2>
-            <form action="post">            
-                <p>E-mail</p>
-                <input type="text">
-                <p>Mot de passe</p>
-                <input type="text">
+            <form>            
+                <div class="input-group">
+                    <label for="email">E-mail</label>
+                    
+                    <input 
+                    type="text"
+                    autocomplete="off"
+                    id="email"
+                    placeholder=""
+                    >
+                    
+                </div>
+                <div class="input-group">
+                    <label for="password">Mot de passe</label>
+                    
+                      <input 
+                      type="password"
+                      autocomplete="off"
+                      id="password"
+                      placeholder=""
+                      >
+                    
+                  </div>
                 <input 
                     type="submit"
                     value="Se connecter">
@@ -38,6 +56,6 @@
             </form>
         </div>
     </main>
-    
+    <script src="./assets/authentify.js"></script>
 </body>
 </html>
