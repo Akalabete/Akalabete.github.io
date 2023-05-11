@@ -1,4 +1,53 @@
 let projects;
+let modal= null;
+//  ajout de la modale si connexion reussie
+const token = sessionStorage.getItem("token");
+// ouverture de la modaleu
+
+const openModal = function(e){
+  e.preventDefault();
+  const target = document.querySelector("#modal");
+  target.style.display = 'flex';
+  target.removeAttribute('aria-hidden');
+  target.setAttribute('aria-modal', 'true');
+  modal = target;
+}
+if(token){
+  const logged = document.querySelector(".connected");
+  logged.innerHTML='Sophie';
+  const magicElements = document.querySelectorAll(".magic");
+  magicElements.forEach(magicElement => magicElement.style.display = null); 
+  // ajout de l'évènement au click sur les liens
+  const editLinks = document.querySelectorAll(".js-modal");
+  editLinks.forEach(link => {
+  link.addEventListener("click", openModal);
+});
+
+  showAll();
+}else{
+  showAll()
+};
+
+
+
+//ajout de possibilité de quitter la modale en cliquant hors champ
+const modalContainer = document.querySelector(".modal-container");
+window.addEventListener("click", function(event){
+  if (event.target !== modalContainer) {
+    closeModal();
+  }
+});
+// fonction qui ferme la modale
+function closeModal(){
+  const target = document.querySelector("#modal");
+  target.style.display= "none";
+  target.setAttribute('aria-hidden', 'true');
+  target.removeAttribute('aria-modal');
+  modal = null;
+}
+
+// affichage du contenu dynamique
+
 
 function showAll() {
   fetch("http://localhost:5678/api/works")
@@ -87,4 +136,6 @@ function activeButton(currentActiveButton){
     currentActiveButton.classList.add("btn-active");
 }
 
-showAll();
+
+
+

@@ -95,22 +95,25 @@ nav li {
 	font-size: 1.2em;
 }
 
-li:hover {
+li:hover,li a:hover {
 	color: #B1663C;
 }
 #introduction {
 	display: flex;
 	align-items: center;
 }
-#introduction figure {
+#introduction figure  {
 	flex: 1
 }
-#introduction img {
+/* ajout de la figcaption */ 
+#introduction img, #introduction figcaption {
 	display: block;
 	margin: auto;
 	width: 80%;
 }
-
+#introduction figcaption {
+	margin-top: 10px;
+}
 #introduction article {
 	flex: 1
 }
@@ -244,4 +247,42 @@ form button{
 	border: none;
 	background: none;
 	text-decoration: underline;
+}
+
+nav a {
+	text-decoration : none;
+	color: black;
+}
+
+/* mise en forme de la modale */
+
+.modal{
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.8);
+
+}
+.modal-container {
+	overflow: auto;
+	width: 600px;
+	max-width: calc(100vh-20px);
+	max-height: calc(100vh-20px);
+	padding: 20px;
+	background-color: white;
+
+}
+
+article a {
+	margin-bottom: 20px; 
+}
+
+.magic a {
+	text-decoration: none;
+	color: black;
 }

@@ -9,25 +9,46 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
+	<script src="https://kit.fontawesome.com/15c7396bf2.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <header>
-	<h1>Sophie Bluel <span>Architecte d'inteérieur</span></h1>
+	<h1>Sophie Bluel <span>Architecte d'intérieure</span></h1>
 	<nav>
 		<ul>
 			<li>projets</li>
 			<li>contact</li>
-			<li>login</li>
+			<li class="connected"><a href="./login.html">login</a></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
 </header>
 <main>
+	<aside 
+		id="modal"
+		class="modal"
+		aria-hidden="true"
+		role="interface admin"
+		aria-modal="false"
+		aria-labelled=""
+		style="display: none;" >
+		<div class="modal-container">
+			
+		</div>
+	</aside>
+
+
 	<section id="introduction">
 		<figure>
 			<img src="./assets/images/sophie-bluel.png" alt="">
+			<div class="magic js-modal" style="display: none;">
+				<figcaption><a href="#modal"class><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a></figcaption>
+			</div>
 		</figure>
 		<article>
+			<div class="magic" style="display: none;">
+				<a href="#modal" class="js-modal"><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a>
+			</div>
 			<h2>Designer d'espace</h2>
 			<p>Je raconte votre histoire, je valorise vos idées. Je vous accompagne de la conception à la livraison finale du chantier.</p>
 			<p>Chaque projet sera étudié en commun, de façon à mettre en valeur les volumes, les matières et les couleurs dans le respect de l’esprit des lieux et le choix adapté des matériaux. Le suivi du chantier sera assuré dans le souci du détail, le respect du planning et du budget.</p>
