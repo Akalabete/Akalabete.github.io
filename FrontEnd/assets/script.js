@@ -1,51 +1,94 @@
+// mes variables
 let projects;
-let modal= null;
-//  ajout de la modale si connexion reussie
+let isModalOpen = false;
+// Récupération du token d'authentification
 const token = sessionStorage.getItem("token");
-// ouverture de la modaleu
+const modalContainer = document.querySelector(".modal-container");
+const closeCross = document.querySelector(".close-modal-cross");
 
-const openModal = function(e){
-  e.preventDefault();
+// creation de la modale au chargement
+
+function createModal(){
   const target = document.querySelector("#modal");
-  target.style.display = 'flex';
-  target.removeAttribute('aria-hidden');
-  target.setAttribute('aria-modal', 'true');
-  modal = target;
+  target.setAttribute('style', 'display: none');
+  target.setAttribute('aria-hidden', 'true');
+  target.setAttribute('aria-modal', 'false');
 }
-if(token){
+
+createModal();
+
+// ajout de Sophie a la place du bouton login et verification du token d'auth
+
+if (token) {
   const logged = document.querySelector(".connected");
-  logged.innerHTML='Sophie';
+  logged.innerHTML = 'logout';
+  logged.addEventListener("click", reinit);
   const magicElements = document.querySelectorAll(".magic");
-  magicElements.forEach(magicElement => magicElement.style.display = null); 
-  // ajout de l'évènement au click sur les liens
-  const editLinks = document.querySelectorAll(".js-modal");
-  editLinks.forEach(link => {
+  magicElements.forEach(magicElement => magicElement.style.display = "flex");
+  showAll();
+} else { 
+  showAll();
+}
+// definition de la fonction logout
+function reinit(event){
+  event.preventDefault();
+  sessionStorage.removeItem("token");
+  location.reload();
+  alert("A bientôt!")
+  console.log(token)
+
+}
+//ajout des liens modifier
+const editLinks = document.querySelectorAll(".js-modal");
+editLinks.forEach(link => {
   link.addEventListener("click", openModal);
 });
-
-  showAll();
-}else{
-  showAll()
-};
-
-
-
-//ajout de possibilité de quitter la modale en cliquant hors champ
-const modalContainer = document.querySelector(".modal-container");
-window.addEventListener("click", function(event){
-  if (event.target !== modalContainer) {
+// ouverture de la modale au click
+function openModal(event) {
+  event.stopPropagation(); // Empêche la fermeture immédiate de la modale
+  //console.log("clicked");
+  // changement des attributs de la modale
+  const target = document.querySelector("#modal");
+  target.setAttribute('style', 'display: flex');
+  target.setAttribute('aria-hidden', 'false');
+  target.setAttribute('aria-modal', 'true');
+  //console.log(target);
+  isModalOpen = true;
+  //console.log(isModalOpen);
+  //creation du contenu dynamique de la modale
+  dynamicModalContent(projects);
+  // Ajout de la possibilité de quitter la modale
+  // en cliquant hors champs, désynchronisé
+  setTimeout(function() {
+    //console.log("timed ?");
+    addEvent();
+  }, 100);
+}
+//  ajout de l'eventlistener
+function addEvent() {  
+  window.addEventListener("click", outsideClick);
+  closeCross.addEventListener("click", outsideClick);
+}
+// fonction qui verifie que l'on clique bien en dehors de la
+// modale ou sur la croix
+function outsideClick(event) {
+  if (!modalContainer.contains(event.target)|| closeCross.contains(event.target)){
     closeModal();
   }
-});
-// fonction qui ferme la modale
-function closeModal(){
-  const target = document.querySelector("#modal");
-  target.style.display= "none";
-  target.setAttribute('aria-hidden', 'true');
-  target.removeAttribute('aria-modal');
-  modal = null;
 }
-
+// fonction qui ferme la modale
+function closeModal() {
+  //console.log(isModalOpen);
+  if (isModalOpen == true) {
+    //console.log("je ferme tout seul?");
+    createModal()
+    window.removeEventListener("click", outsideClick);
+    closeCross.removeEventListener("click", outsideClick);
+    isModalOpen = false;
+  } else {
+    return;
+  }
+}
 // affichage du contenu dynamique
 
 
@@ -72,7 +115,7 @@ function showAll() {
   bouttonShowObjects.addEventListener("click", function () {
     const obj = projects.filter(project => project.category.id === 1);
     showProjects(obj);
-    let currentActiveButton =  document.querySelector(".objects");
+   let currentActiveButton =  document.querySelector(".objects");
     inactiveButton();
     activeButton(currentActiveButton);
   });
@@ -136,6 +179,24 @@ function activeButton(currentActiveButton){
     currentActiveButton.classList.add("btn-active");
 }
 
-
+function dynamicModalContent(projects){
+  const galeryElement = document.querySelector("#modal-gallery");
+  galeryElement.innerHTML = "";
+  for (let i = 0; i < projects.length; i++) {
+    // créa des éléments figures
+    const project = document.createElement("figure");
+    // créa et mise en forme des image avec le alt
+    const projectImg = document.createElement("img");
+    projectImg.src = projects[i].imageUrl;
+    projectImg.alt = projects[i].title;
+    // creé et mise en forme de la description
+    const projectEdition = document.createElement("a");
+    projectEdition.innerText = "éditer";
+    // rattachement au parents
+    project.appendChild(projectImg);
+    project.appendChild(projectEdition);
+    galeryElement.appendChild(project);
+  }
+}
 
 

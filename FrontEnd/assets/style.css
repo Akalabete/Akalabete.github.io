@@ -53,7 +53,9 @@ body {
 	font-family: 'Work Sans' ;
 	font-size: 14px;
 }
-header {
+
+/* legere mod de la dispo du header pour ajouter le bandeau admin */ 
+.header-corp {
 	display: flex;
 	justify-content: space-between;
 	margin: 50px 0
@@ -254,11 +256,30 @@ nav a {
 	color: black;
 }
 
+
+/* stylime des liens dans la page*/
+article a {
+	margin-bottom: 20px; 
+}
+.magic{
+	display: none;
+}
+.magic a {
+	text-decoration: none;
+	color: black;
+}
+
+* a:hover{
+	cursor: pointer
+}
+
+
+
+
 /* mise en forme de la modale */
 
-.modal{
+#modal{
 	position: fixed;
-	display: flex;
 	align-items: center;
 	justify-content: center;
 	top: 0;
@@ -269,20 +290,76 @@ nav a {
 
 }
 .modal-container {
+	position: relative;
 	overflow: auto;
-	width: 600px;
+	width: 80%;
+	height:80%;
 	max-width: calc(100vh-20px);
 	max-height: calc(100vh-20px);
 	padding: 20px;
 	background-color: white;
-
+	border-radius: 10px;
 }
 
-article a {
-	margin-bottom: 20px; 
+/* positionnement de la croix de fermeture dans la modale */
+
+.close-modal-cross{
+	position:absolute;
+	top: 20px;
+	right: 20px;
 }
 
-.magic a {
-	text-decoration: none;
+h3{
+	font-family: 'Work sans';
+	font-weight: 400;
+	font-size: 26px;
 	color: black;
+}
+.modal-container h3 {
+	text-align: center;
+	padding-top: 50px;
+}
+/* design grid modal */
+#modal-gallery {
+	padding-top: 30px;
+	margin: auto;
+	width: 80%;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+	grid-column-gap: 1%;
+	grid-row-gap: 3%;
+}
+
+#modal-gallery figure img {
+	width: 100%;
+	margin: 0;
+}
+#modale-gallery figure a {
+	margin-top: 10px;
+} 
+
+.header-add{
+	background-color: black;
+	color: white;
+	padding:10px 0;
+}
+
+.header-add-button-container{
+	display: flex;
+	margin: auto;	
+}
+
+.header-add-button-container p{
+	padding: 10px;
+	font-weight: 300;
+	font-size: 10px
+}
+
+.header-add-button-container button{
+	background-color: white;
+	color: black;
+	border: none;
+	border-radius: 50px;
+	padding: 10px;
+	font-size: 10px
 }

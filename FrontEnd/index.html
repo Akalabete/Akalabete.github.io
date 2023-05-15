@@ -12,48 +12,59 @@
 	<script src="https://kit.fontawesome.com/15c7396bf2.js" crossorigin="anonymous"></script>
 </head>
 <body>
+	
 <header>
-	<h1>Sophie Bluel <span>Architecte d'intérieure</span></h1>
-	<nav>
-		<ul>
-			<li>projets</li>
-			<li>contact</li>
-			<li class="connected"><a href="./login.html">login</a></li>
-			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
-		</ul>
-	</nav>
+	<div class="header-add magic">
+		<div class="header-add-button-container">
+			<p><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbsp Mode édition</p>
+			<button class="header-button">publier les modifications</button>
+		</div>
+	</div>
+	<div class="header-corp">
+		<h1>Sophie Bluel <span>Architecte d'intérieure</span></h1>
+		<nav>
+			<ul>
+				<li><a href="#portfolio">projets</a></li>
+				<li><a href="#contact">contact</a></li>
+				<li class="connected"><a href="./login.html">login</a></li>
+				<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+			</ul>
+		</nav>
+	</div>
 </header>
 <main>
-	<aside 
-		id="modal"
-		class="modal"
-		aria-hidden="true"
-		role="interface admin"
-		aria-modal="false"
-		aria-labelled=""
-		style="display: none;" >
-		<div class="modal-container">
-			
-		</div>
-	</aside>
-
-
 	<section id="introduction">
 		<figure>
 			<img src="./assets/images/sophie-bluel.png" alt="">
-			<div class="magic js-modal" style="display: none;">
-				<figcaption><a href="#modal"class><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a></figcaption>
+			<div class="magic">
+				<figcaption><a class="js-modal"><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a></figcaption>
 			</div>
 		</figure>
 		<article>
-			<div class="magic" style="display: none;">
-				<a href="#modal" class="js-modal"><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a>
+			<div class="magic">
+				<a class="js-modal"><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a>
 			</div>
 			<h2>Designer d'espace</h2>
 			<p>Je raconte votre histoire, je valorise vos idées. Je vous accompagne de la conception à la livraison finale du chantier.</p>
 			<p>Chaque projet sera étudié en commun, de façon à mettre en valeur les volumes, les matières et les couleurs dans le respect de l’esprit des lieux et le choix adapté des matériaux. Le suivi du chantier sera assuré dans le souci du détail, le respect du planning et du budget.</p>
 			<p>En cas de besoin, une équipe pluridisciplinaire peut-être constituée : architecte DPLG, décorateur(trice)</p>
 		</article>
+		<aside 
+			id="modal"
+			class="modal"
+			role="interface admin"
+			aria-labelled=""
+			>
+			<div class="modal-container">
+				<div class="close-modal-cross">
+					<i class="fa-solid fa-xmark fa-xl"></i>
+				</div>	
+				<H3>Galerie photo</H3>
+				<div id="modal-gallery">
+
+				</div>	
+			</div>
+		</aside>
 	</section>
 	<section id="portfolio">
 		<h2>Mes Projets</h2>
