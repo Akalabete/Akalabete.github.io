@@ -286,9 +286,27 @@ function addNewPic(){
   //console.log(modalTwo);
   const modalOne = document.querySelector(".one");
   modalOne.setAttribute("style", "display: none");
+  // ajout d'un listener sur la page d'ajout
+  const validateAdd = document.querySelector(".pic-send");
+  validateAdd.addEventListener(click, function(){
+    console.log("je valide les changements)");
+    const fileInput = document.querySelector('fileInput');
+    const imgUrl = fileInput.value;
+    const titleInput = document.querySelector('title');
+    const picTitle = titleInput.value;
+    const catInput = document.querySelector('category');
+    const cat = catInput.value;
+    createNewProject(imgUrl, picTitle, cat);
+  })
 }
 
-
+// crea d'un nouveau projet avec validation des champs
+function createNewProject(imgUrl, picTitle, cat){
+  if (imgUrl && picTitle && cat){
+    
+  }
+  
+}
 // retour arrière
 
 function printModalOne(){  
