@@ -68,11 +68,13 @@ function openModal(event) {
   }, 100);
 }
 
+
 //  ajout de l'eventlistener
 function addEvent() {  
   window.addEventListener("click", outsideClick);
   closeCross.addEventListener("click", outsideClick);
 }
+
 
 // fonction qui verifie que l'on clique bien en dehors de la
 // modale ou sur la croix
@@ -81,6 +83,7 @@ function outsideClick(event) {
     closeModal();
   }
 }
+
 
 // fonction qui ferme la modale
 function closeModal() {
@@ -95,6 +98,7 @@ function closeModal() {
     return;
   }
 }
+
 
 // affichage du contenu dynamique
 function showAll() {
@@ -146,7 +150,8 @@ function showAll() {
   });
 }
 
-// contructeur de la mini gallerie
+
+// constructeur de la gallerie
 function showProjects(projects) {
   const galeryElement = document.querySelector(".gallery");
   galeryElement.innerHTML = "";
@@ -172,6 +177,7 @@ function showProjects(projects) {
   activeButton(currentActiveButton);
 }
 
+
 // fonction qui vont attribuer  btn-active et inactive bouttons
 function inactiveButton(){
     const buttonCount = document.querySelectorAll(".show");
@@ -184,6 +190,7 @@ function activeButton(currentActiveButton){
     currentActiveButton.classList.remove("btn-inactive");
     currentActiveButton.classList.add("btn-active");
 }
+
 
 // constructeur de la mini gallerie
 function dynamicModalContent(projects){
@@ -198,38 +205,61 @@ function dynamicModalContent(projects){
   addPhoto.addEventListener('click', addNewPic);
   const galeryElement = document.querySelector("#modal-gallery");
   galeryElement.innerHTML = "";
+  const deleteAllBtn = document.querySelector('.delete-gallery');
+  deleteAllBtn.addEventListener('click', function(){
+    deleteAll();
+  })
   for (let i = 0; i < projects.length; i++) {
     const project = document.createElement("figure");
     const projectImg = document.createElement("img");
     projectImg.src = projects[i].imageUrl;
     projectImg.alt = projects[i].title;
+    // ajout du fa trashcan 
+    const iconContainer = document.createElement("div");
+    iconContainer.classList.add("icon-container");
+    const icon = document.createElement("i");
+    icon.classList.add("fa-solid", "fa-trash-can", "fa-xs")
+    project.classList.add("trashcan");
     // ajout du lien d'édition
     const projectEdition = document.createElement("p");
     projectEdition.innerText = "éditer";
-    projectEdition.classList.add(`project-edit`) 
+    projectEdition.classList.add(`project-edit`);
+    iconContainer.appendChild(icon)
+    project.appendChild(iconContainer);
     project.appendChild(projectImg);
     project.appendChild(projectEdition);
     galeryElement.appendChild(project);
   }
   // ajout du listener de modification 
   const projectEditionBtns = document.querySelectorAll(".project-edit");
-  console.log(projectEditionBtns);
+  //console.log(projectEditionBtns);
   for (let j = 0; j < projectEditionBtns.length; j++) {
     const projectEditionBtn = projectEditionBtns[j];
     let imgUrl= projects[j].imageUrl;
     let picTitle= projects[j].title;
     let cat= projects[j].categoryId;
     projectEditionBtn.addEventListener("click", function() {
-      console.log("clicked");
+      //console.log("clicked");
       modifyPic(imgUrl, picTitle, cat);
     });
+  }
+  // ajout du listener sur le bouton trash
+  const trashCanBtns = document.querySelectorAll(".icon-container");
+  for (let k = 0; k < trashCanBtns.length; k++){
+    const trashCanBtn = trashCanBtns[k];
+    let projectID = projects[k].id;
+    trashCanBtn.addEventListener('click', function() {
+      console.log(projectID);
+      //deleteItem(projectID);
+    })
   }
 }
 
 
 // construction de la page d'édition du lien édit
+
 function modifyPic(imgUrl, picTitle, cat){
-  console.log("clicked");
+  //console.log("clicked");
   addNewPic();
   const editTitle = document.querySelector('.modal-two-title');
   editTitle.innerText = "Edition de photo";
@@ -253,7 +283,7 @@ function addNewPic(){
   backBtn.addEventListener("click", printModalOne);
   const modalTwo = document.querySelector(".two");
   modalTwo.setAttribute("style", "display: block");
-  console.log(modalTwo);
+  //console.log(modalTwo);
   const modalOne = document.querySelector(".one");
   modalOne.setAttribute("style", "display: none");
 }
@@ -305,5 +335,61 @@ function handleFileSelect(event) {
     reader.readAsDataURL(file);
   } else {
     previewImage.style.display = 'none';
+  }
+}
+
+// function de suppression d'une photo dans la mini gallerie fa trashcan
+
+function deleteItem(projectID) {
+  const confirmed = confirm("Voulez-vous vraiment supprimer ce projet?")
+  if (confirmed) {
+    const updatedProjects = projects.filter(project => project.projectID !== projectID)
+    projects = updatedProjects;
+    showProjects(projects);
+    dynamicModalContent(projects);
+    deleteItemApi(projectID);
+
+  }
+}
+
+
+// format delete = ID ? http://localhost:5678/api/works/${projectID}
+function deleteItemApi(projectID) {
+  fetch(`http://localhost:5678/api/works/${projectID}`, 
+  { method: 'DELETE' })
+    .then(async response => {
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const data = isJson && await response.json();
+
+        // check for error response
+        if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+        }
+
+        alert('Projet supprimé!');
+    })
+    .catch(error => {
+        alert(`Erreur: ${error}`);
+        console.error('There was an error!', error);
+    });
+
+}
+
+// ajout de la fonctionnalité deletAll
+
+function deleteAll() {
+  //console.log("delete all")
+  const confirmed = confirm("Voulez-vous vraiment supprimer tous vos projets?")
+  if(confirmed){
+    for (let i = projects.length; i > 0; i--){
+      const projectID = i;
+      deleteItem(projectID);
+    }
+    showProjects(projects);
+    dynamicModalContent(projects);
+  }else {
+    return;
   }
 }
