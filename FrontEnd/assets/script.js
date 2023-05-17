@@ -188,8 +188,12 @@ function activeButton(currentActiveButton){
 // constructeur de la mini gallerie
 function dynamicModalContent(projects){
   // bouton ajout d'une photo
+  const modalOne = document.querySelector(".one");
+  modalOne.setAttribute("style", "display: block")
   const modalTwo = document.querySelector(".two");
   modalTwo.setAttribute("style", "display: none");
+  const backBtn = document.querySelector(".cancel-add");
+  backBtn.setAttribute("style", "display: none");
   const addPhoto = document.querySelector(".photo-add");
   addPhoto.addEventListener('click', addNewPic);
   const galeryElement = document.querySelector("#modal-gallery");
@@ -199,34 +203,107 @@ function dynamicModalContent(projects){
     const projectImg = document.createElement("img");
     projectImg.src = projects[i].imageUrl;
     projectImg.alt = projects[i].title;
-
     // ajout du lien d'édition
-    const projectEdition = document.createElement("a");
+    const projectEdition = document.createElement("p");
     projectEdition.innerText = "éditer";
+    projectEdition.classList.add(`project-edit`) 
     project.appendChild(projectImg);
     project.appendChild(projectEdition);
     galeryElement.appendChild(project);
   }
+  // ajout du listener de modification 
+  const projectEditionBtns = document.querySelectorAll(".project-edit");
+  console.log(projectEditionBtns);
+  for (let j = 0; j < projectEditionBtns.length; j++) {
+    const projectEditionBtn = projectEditionBtns[j];
+    let imgUrl= projects[j].imageUrl;
+    let picTitle= projects[j].title;
+    let cat= projects[j].categoryId;
+    projectEditionBtn.addEventListener("click", function() {
+      console.log("clicked");
+      modifyPic(imgUrl, picTitle, cat);
+    });
+  }
 }
+
+
+// construction de la page d'édition du lien édit
+function modifyPic(imgUrl, picTitle, cat){
+  console.log("clicked");
+  addNewPic();
+  const editTitle = document.querySelector('.modal-two-title');
+  editTitle.innerText = "Edition de photo";
+  const previewImage = document.getElementById('previewImage');
+  previewImage.src = imgUrl;
+  previewImage.style.display = 'flex'
+  const fontAwsomeDefault = document.querySelector('.enlarge');
+  fontAwsomeDefault.style.display= "none";
+  const title = document.getElementById('title');
+  title.value = picTitle;
+  const category = document.getElementById("categories");
+  category.value = cat;
+}
+
 
 //permutation entre les pages de la modale
+
 function addNewPic(){
+  const backBtn = document.querySelector(".cancel-add");
+  backBtn.setAttribute("style", "display: block");
+  backBtn.addEventListener("click", printModalOne);
+  const modalTwo = document.querySelector(".two");
+  modalTwo.setAttribute("style", "display: block");
+  console.log(modalTwo);
   const modalOne = document.querySelector(".one");
   modalOne.setAttribute("style", "display: none");
-  const modalTwo = document.querySelector(".two");
-  modalTwo.setAttribute("style", "display: flex")
 }
-// creation du formulaire d'ajout de photo
 
 
-// annulation de l'ajout de photo avec le bouton <-
-//const backBtn = document.querySelector(".cancel-add");
-//backBtn.addEventListener("click", openModal);
+// retour arrière
 
-function backToModalOne(){
-  
+function printModalOne(){  
   const modalTwo = document.querySelector(".two");
   modalTwo.setAttribute("style", "display: none");
   const modalOne = document.querySelector(".one");
-  modalOne.setAttribute("style", "display: flex")
+  modalOne.setAttribute("style", "display: block");
+  const backBtn = document.querySelector(".cancel-add");
+  backBtn.setAttribute("style", "display: none");
+  resetPic()
+  backBtn.removeEventListener("click", printModalOne);  
+}
+
+// function qui verifie et annule l'ajout de la photo
+
+function resetPic(){
+  if(previewImage.style.display = 'flex'){
+    const fileInput = document.getElementById('fileInput');
+    const previewImage = document.getElementById('previewImage');
+    const fontAwsomeDefault = document.querySelector('.enlarge');
+    previewImage.src = '#';
+    previewImage.style.display = 'none';
+    fileInput.value = '';
+    fontAwsomeDefault.style.display = 'flex';
+  }else {
+    return;
+  }
+} 
+
+
+// function ajout d'une photo
+
+function handleFileSelect(event) {
+  const file = event.target.files[0];
+  const previewImage = document.getElementById('previewImage');
+  const fontAwsomeDefault = document.querySelector('.enlarge');
+  if (file && file.type.match('image.*')) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      previewImage.src = e.target.result;
+      previewImage.style.display = 'flex';
+      fontAwsomeDefault.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  } else {
+    previewImage.style.display = 'none';
+  }
 }

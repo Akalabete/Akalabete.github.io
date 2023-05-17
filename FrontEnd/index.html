@@ -55,26 +55,54 @@
 			role="interface admin"
 			aria-labelled=""
 			>
-			<div class="modal-container one">
-				<div class="close-modal-cross">
-					<i class="fa-solid fa-xmark fa-xl"></i>
-				</div>	
-				<H3>Galerie photo</H3>
-				<div id="modal-gallery"></div>
-				<div class="modal-gallery-btn-container">
-					<button class="photo-add">Ajouter une photo</button>
-					<button class="delete-gallery">Supprimier la galerie</button>
-				</div>	
-			</div>
-			<div class="modal-container two">
+			<div class="modal-container">
 				<div class="cancel-add">
 					<i class="fa-solid fa-sharp fa-arrow-left fa-xl"></i>
 				</div>
 				<div class="close-modal-cross">
 					<i class="fa-solid fa-xmark fa-xl"></i>
+				</div>
+				<div class="one">
+					<H3>Galerie photo</H3>
+					<div class="modal-gallery-container">
+						<div id="modal-gallery"></div>
+					</div>
+					<div class="modal-gallery-btn-container">
+						<button class="photo-add">Ajouter une photo</button>
+						<button class="delete-gallery">Supprimier la galerie</button>
+					</div>	
+				</div>
+				<div class="two">
+					<h3 class="modal-two-title">Ajout photo</h3>
+					<div class="add-photo-form-container">
+						<form action="#" id="addingNewPic">
+							<div class="input-file-container">
+								<div class="pic-preview-container">
+								  <img id="previewImage" src="#" alt="Aperçu de l'image" style="display: none;">
+								  <i class="enlarge fa-regular fa-image"></i>
+								</div>
+							  
+								<label for="fileInput" class="custom-file-upload">
+								  <span>+ Ajout photo</span>
+								  <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
+								</label>
+							</div>
+							<label for="title">Titre</label>
+							<input type="text" name="titlec" id="title">
+							<label for="categories">Catégories</label>
+							<select name="categories" id="categories">
+								<option value="1">Objets</option>
+								<option value="2">Appartements</option>
+								<option value="3">Hotels & restaurants</option>
+							</select>
+							<div class="greyline"></div>
+
+							<input type="submit"class="pic-send" value="Valider">
+						</form>
+					</div>					
 				</div>	
-				<h2>super titre</h2>
 			</div>
+			
 		</aside>
 	</section>
 	<section id="portfolio">
