@@ -263,6 +263,8 @@ function modifyPic(imgUrl, picTitle, cat){
   addNewPic();
   const editTitle = document.querySelector('.modal-two-title');
   editTitle.innerText = "Edition de photo";
+  const modPicBtn = document.querySelector('.custom-file-upload-span');
+  modPicBtn.innerText = "Changer photo"; 
   const previewImage = document.getElementById('previewImage');
   previewImage.src = imgUrl;
   previewImage.style.display = 'flex'
@@ -272,10 +274,13 @@ function modifyPic(imgUrl, picTitle, cat){
   title.value = picTitle;
   const category = document.getElementById("categories");
   category.value = cat;
+
+  // ajouter une conditionnelle sur la fonction addNewPic qui deleterait l'item a changer pour ajouter l'item changé
+  // car impossible de changer l'item dans la bdd ???
 }
 
 
-//permutation entre les pages de la modale
+//permutation entre les pages de la modale btn nouveau projet
 
 function addNewPic(){
   const backBtn = document.querySelector(".cancel-add");
@@ -287,15 +292,23 @@ function addNewPic(){
   const modalOne = document.querySelector(".one");
   modalOne.setAttribute("style", "display: none");
   // ajout d'un listener sur la page d'ajout
-  const validateAdd = document.querySelector(".pic-send");
-  validateAdd.addEventListener(click, function(){
-    console.log("je valide les changements)");
-    const fileInput = document.querySelector('fileInput');
-    const imgUrl = fileInput.value;
-    const titleInput = document.querySelector('title');
+  const validateAdd = document.getElementById("addingNewPic");
+  validateAdd.addEventListener('submit', function(e){
+    e.preventDefault();
+    //console.log("je valide les changements)");
+    
+    const fileInput = document.getElementById('previewImage');
+    
+    const imgUrl = fileInput.src;
+    //console.log(typeof(imgUrl))
+
+
+    const titleInput = document.getElementById('title');
     const picTitle = titleInput.value;
-    const catInput = document.querySelector('category');
+    //console.log(picTitle)
+    const catInput = document.getElementById('categories');
     const cat = catInput.value;
+    //console.log(cat)
     createNewProject(imgUrl, picTitle, cat);
   })
 }
@@ -303,7 +316,50 @@ function addNewPic(){
 // crea d'un nouveau projet avec validation des champs
 function createNewProject(imgUrl, picTitle, cat){
   if (imgUrl && picTitle && cat){
-    
+   // console.log("clické")
+   // mise en forme du nouveau projet pour la bdd
+    const newProject = {
+      "image": imgUrl,
+      "title": picTitle,
+      "category": cat
+    }
+    console.log(newProject)
+    const formatedPost = JSON.stringify(newProject)
+    // envoi du formulaire
+    // fetch("http://localhost:5678/api/works", {
+    //  method: "POST",
+    //  headers: { "Content-Type": "application/json" },
+    //  body: formatedPost
+    //});
+    // creation de l'objet  pour le tableaux projects.
+    console.log(projects);
+    console.log(newProject.category);
+    let catValue= "";
+    if (newProject.category = 1){
+      catValue = "Objets"
+    } else if (newProject.category = 2){
+      catValue = "Appartements"
+    } else if (newProject.category = 3) {
+      catValue = "Hotels & restaurants"
+    }
+    console.log(catValue);
+    const newObject = {
+      'category':{
+        'id': cat,
+        'name': catValue
+        },
+      'id': projects.length+1,
+      'categoryId': cat,
+      'title': picTitle,
+      'imageUrl': imgUrl
+    };
+    //projects.push(newObject);
+    //showprojects(projects)
+    //dynamicModalContent(projects)
+
+    console.log(newObject);
+  }else {
+    alert('merci de bien vouloir renseigner les champs')
   }
   
 }
@@ -411,3 +467,4 @@ function deleteAll() {
     return;
   }
 }
+
