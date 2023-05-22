@@ -1,7 +1,7 @@
 // mes variables
 let projects;
 let isModalOpen = false;
-
+let isAdmin = 0;
 // Récupération du token d'authentification
 const token = sessionStorage.getItem("token");
 const modalContainer = document.querySelector(".modal-container");
@@ -19,6 +19,7 @@ createModal();
 
 // ajout de Sophie a la place du bouton login et verification du token d'auth
 if (token) {
+  isAdmin = 1;
   const logged = document.querySelector(".connected");
   logged.innerHTML = 'logout';
   logged.addEventListener("click", reinit);
@@ -108,7 +109,18 @@ function showAll() {
       projects = data;
       // Afficher les données pour la première fois (par défaut)
       showProjects(projects);
-    });
+    
+    if (!response.ok) {
+      const error = (data && data.message) || response.status;
+      return Promise.reject(error);
+    }
+  })
+  .catch(error => {
+  alert(`Erreur: ${error}`);
+  console.error('There was an error!', error);
+});
+
+    
 
   //  bouton "Tout"
   const bouttonShowAll = document.querySelector(".all");
@@ -296,13 +308,9 @@ function addNewPic(){
   validateAdd.addEventListener('submit', function(e){
     e.preventDefault();
     //console.log("je valide les changements)");
-    
     const fileInput = document.getElementById('previewImage');
-    
     const imgUrl = fileInput.src;
     //console.log(typeof(imgUrl))
-
-
     const titleInput = document.getElementById('title');
     const picTitle = titleInput.value;
     //console.log(picTitle)
@@ -325,15 +333,26 @@ function createNewProject(imgUrl, picTitle, cat){
     }
     console.log(newProject)
     const formatedPost = JSON.stringify(newProject)
+    console.log(formatedPost);
     // envoi du formulaire
     // fetch("http://localhost:5678/api/works", {
     //  method: "POST",
     //  headers: { "Content-Type": "application/json" },
     //  body: formatedPost
     //});
-    // creation de l'objet  pour le tableaux projects.
-    console.log(projects);
-    console.log(newProject.category);
+    //.then(response => {
+    // if (!response.ok) {
+    //  throw new Error(response.status);
+    // }
+    // return response.json();
+    //})
+    //.then(data => ** mise a jour de projects[]??? tbc {
+    //})
+    //.catch(error => {
+    //  alert("Problème lors de l'ajout de votre projet : " + error);
+    //});
+    //console.log(projects);
+    //console.log(newProject.category);
     let catValue= "";
     if (newProject.category = 1){
       catValue = "Objets"
@@ -342,7 +361,7 @@ function createNewProject(imgUrl, picTitle, cat){
     } else if (newProject.category = 3) {
       catValue = "Hotels & restaurants"
     }
-    console.log(catValue);
+    //console.log(catValue);
     const newObject = {
       'category':{
         'id': cat,
@@ -351,7 +370,8 @@ function createNewProject(imgUrl, picTitle, cat){
       'id': projects.length+1,
       'categoryId': cat,
       'title': picTitle,
-      'imageUrl': imgUrl
+      'imageUrl': imgUrl,
+      'userId': isAdmin
     };
     //projects.push(newObject);
     //showprojects(projects)
@@ -382,11 +402,16 @@ function resetPic(){
   if(previewImage.style.display = 'flex'){
     const fileInput = document.getElementById('fileInput');
     const previewImage = document.getElementById('previewImage');
-    const fontAwsomeDefault = document.querySelector('.enlarge');
+    const fontAwsomeDefault = document.getElementById('enlarge');
+    const formatType = document.querySelector('.format-type');
+    const customFileUpload = document.querySelector('.custom-file-upload'); 
+    previewImage.removeEventListener('click', resetPic)
     previewImage.src = '#';
     previewImage.style.display = 'none';
     fileInput.value = '';
     fontAwsomeDefault.style.display = 'flex';
+    formatType.style.display= 'flex';
+    customFileUpload.style.display= 'flex';
   }else {
     return;
   }
@@ -398,15 +423,22 @@ function resetPic(){
 function handleFileSelect(event) {
   const file = event.target.files[0];
   const previewImage = document.getElementById('previewImage');
-  const fontAwsomeDefault = document.querySelector('.enlarge');
+  const fontAwsomeDefault = document.getElementById('enlarge');
+  const formatType = document.querySelector('.format-type');
+  const customFileUpload = document.querySelector('.custom-file-upload'); 
   if (file && file.type.match('image.*')) {
     const reader = new FileReader();
     reader.onload = function (e) {
       previewImage.src = e.target.result;
       previewImage.style.display = 'flex';
       fontAwsomeDefault.style.display = 'none';
+      formatType.style.display= 'none';
+      customFileUpload.style.display= 'none';
     };
     reader.readAsDataURL(file);
+    previewImage.addEventListener('click', function(){
+      resetPic();
+    })
   } else {
     previewImage.style.display = 'none';
   }

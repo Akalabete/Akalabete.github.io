@@ -462,12 +462,21 @@ h3{
 	justify-content: center;
 	align-items: center;
 	height: 30px;
+	width: 60%;
 	background-color:#CBD6DC;
 	color:#306685;
 	border: none;
 	padding: 10px;
 	cursor: pointer;
 	border-radius: 50px;
+	
+}
+.format-type{
+	display: flex;
+	padding: 10px 0;
+	margin:  auto;
+	justify-content: center;
+	font-size: 12px;
 }
   
 .custom-file-upload span {
@@ -485,7 +494,9 @@ h3{
 	width: 100px;
 	height: 120px;
 }
-.enlarge {
+
+
+#enlarge {
 	width: 100%;
 	height: 100%;
 	color: #306685;

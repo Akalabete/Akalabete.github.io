@@ -79,13 +79,14 @@
 							<div class="input-file-container">
 								<div class="pic-preview-container">
 								  <img id="previewImage" src="#" alt="Aperçu de l'image" style="display: none;">
-								  <i class="enlarge fa-regular fa-image"></i>
+								  <i id="enlarge" class="enlarge fa-regular fa-image"></i>
 								</div>
 							  
 								<label for="fileInput" class="custom-file-upload">
 								  <span class="custom-file-upload-span">+ Ajout photo</span>
 								  <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)">
 								</label>
+								<p class="format-type">jpg, png: 4mo max</p>
 							</div>
 							<label for="title">Titre</label>
 							<input type="text" name="title" id="title">
