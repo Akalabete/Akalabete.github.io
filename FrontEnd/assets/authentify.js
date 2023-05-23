@@ -26,7 +26,6 @@ function handleForm (event){
   .then(data => handleResponse(data))
   .catch(error =>  {
     console.log(error);
-    alert("Identifiants incorrects");
 });
 }
 

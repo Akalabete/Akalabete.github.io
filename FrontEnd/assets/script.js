@@ -17,7 +17,7 @@ function createModal(){
 
 createModal();
 
-// ajout de Sophie a la place du bouton login et verification du token d'auth
+// ajout de logout a la place du bouton login et verification du token d'auth
 if (token) {
   isAdmin = 1;
   const logged = document.querySelector(".connected");
@@ -47,30 +47,24 @@ editLinks.forEach(link => {
 // ouverture de la modale au click
 function openModal(event) {
   event.stopPropagation(); // Empêche la fermeture immédiate de la modale
-  //console.log("clicked");
-
   // changement des attributs de la modale
   const target = document.querySelector("#modal");
   target.setAttribute('style', 'display: flex');
   target.setAttribute('aria-hidden', 'false');
   target.setAttribute('aria-modal', 'true');
-  //console.log(target);
   isModalOpen = true;
-  //console.log(isModalOpen);
 
   //creation du contenu dynamique de la modale
   dynamicModalContent(projects);
-
   // Ajout de la possibilité de quitter la modale
   // en cliquant hors champs, désynchronisé
   setTimeout(function() {
-    //console.log("timed ?");
     addEvent();
   }, 100);
 }
 
 
-//  ajout de l'eventlistener
+//  ajout de l'eventlistener sur la globalité de la page
 function addEvent() {  
   window.addEventListener("click", outsideClick);
   closeCross.addEventListener("click", outsideClick);
@@ -88,9 +82,7 @@ function outsideClick(event) {
 
 // fonction qui ferme la modale
 function closeModal() {
-  //console.log(isModalOpen);
   if (isModalOpen == true) {
-    //console.log("je ferme tout seul?");
     createModal()
     window.removeEventListener("click", outsideClick);
     closeCross.removeEventListener("click", outsideClick);
@@ -104,22 +96,22 @@ function closeModal() {
 // affichage du contenu dynamique
 function showAll() {
   fetch("http://localhost:5678/api/works")
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(response.status);
+      }
+      return response.json();
+    })
     .then(data => {
       projects = data;
       // Afficher les données pour la première fois (par défaut)
       showProjects(projects);
-    
-    if (!response.ok) {
-      const error = (data && data.message) || response.status;
-      return Promise.reject(error);
-    }
-  })
-  .catch(error => {
-  alert(`Erreur: ${error}`);
-  console.error('There was an error!', error);
-});
-
+    })
+    .catch(error => {
+      alert(`Erreur: ${error}`);
+      console.error("error");
+    });
+}
     
 
   //  bouton "Tout"
@@ -136,7 +128,7 @@ function showAll() {
   bouttonShowObjects.addEventListener("click", function () {
     const obj = projects.filter(project => project.category.id === 1);
     showProjects(obj);
-   let currentActiveButton =  document.querySelector(".objects");
+    let currentActiveButton =  document.querySelector(".objects");
     inactiveButton();
     activeButton(currentActiveButton);
   });
@@ -160,7 +152,7 @@ function showAll() {
     inactiveButton();
     activeButton(currentActiveButton);
   });
-}
+
 
 
 // constructeur de la gallerie
@@ -244,14 +236,12 @@ function dynamicModalContent(projects){
   }
   // ajout du listener de modification 
   const projectEditionBtns = document.querySelectorAll(".project-edit");
-  //console.log(projectEditionBtns);
   for (let j = 0; j < projectEditionBtns.length; j++) {
     const projectEditionBtn = projectEditionBtns[j];
     let imgUrl= projects[j].imageUrl;
     let picTitle= projects[j].title;
     let cat= projects[j].categoryId;
     projectEditionBtn.addEventListener("click", function() {
-      //console.log("clicked");
       modifyPic(imgUrl, picTitle, cat);
     });
   }
@@ -261,8 +251,7 @@ function dynamicModalContent(projects){
     const trashCanBtn = trashCanBtns[k];
     let projectID = projects[k].id;
     trashCanBtn.addEventListener('click', function() {
-      console.log(projectID);
-      //deleteItem(projectID);
+      deleteItem(projectID);
     })
   }
 }
@@ -271,7 +260,6 @@ function dynamicModalContent(projects){
 // construction de la page d'édition du lien édit
 
 function modifyPic(imgUrl, picTitle, cat){
-  //console.log("clicked");
   addNewPic();
   const editTitle = document.querySelector('.modal-two-title');
   editTitle.innerText = "Edition de photo";
@@ -300,88 +288,91 @@ function addNewPic(){
   backBtn.addEventListener("click", printModalOne);
   const modalTwo = document.querySelector(".two");
   modalTwo.setAttribute("style", "display: block");
-  //console.log(modalTwo);
   const modalOne = document.querySelector(".one");
   modalOne.setAttribute("style", "display: none");
   // ajout d'un listener sur la page d'ajout
   const validateAdd = document.getElementById("addingNewPic");
   validateAdd.addEventListener('submit', function(e){
     e.preventDefault();
-    //console.log("je valide les changements)");
-    const fileInput = document.getElementById('previewImage');
-    const imgUrl = fileInput.src;
-    //console.log(typeof(imgUrl))
+    const fileInput = document.getElementById('previewImage')
+    const imgUrl =  fileInput.src;  
+    // const imgUrl = url v1.5 erreur 500
     const titleInput = document.getElementById('title');
-    const picTitle = titleInput.value;
-    //console.log(picTitle)
+    const picTitle = titleInput.value;    
     const catInput = document.getElementById('categories');
-    const cat = catInput.value;
-    //console.log(cat)
+    const cat = catInput.value;    
     createNewProject(imgUrl, picTitle, cat);
   })
 }
 
 // crea d'un nouveau projet avec validation des champs
-function createNewProject(imgUrl, picTitle, cat){
-  if (imgUrl && picTitle && cat){
-   // console.log("clické")
-   // mise en forme du nouveau projet pour la bdd
+function createNewProject(imgUrl, picTitle, cat) {
+  if (imgUrl && picTitle && cat) {
+
+//v2 erreur 400
+ /*   const formData = new FormData();
+    formData.append('image', imgUrl);
+    formData.append('title', picTitle);
+    formData.append('category', cat);
+*/
+// v1 erreur 413
     const newProject = {
       "image": imgUrl,
       "title": picTitle,
       "category": cat
+    };
+    const formatedPost = JSON.stringify(newProject);
+
+    fetch("http://localhost:5678/api/works", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+      },
+      body: formatedPost
+      //body: formData
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Mise à jour de projects[]
+        // ...
+      })
+      .catch(error => {
+        alert("Problème lors de l'ajout de votre projet : " + error);
+      });
+
+    let catValue = "";
+    if (newProject.category === 1) {
+      catValue = "Objets";
+    } else if (newProject.category === 2) {
+      catValue = "Appartements";
+    } else if (newProject.category === 3) {
+      catValue = "Hotels & restaurants";
     }
-    console.log(newProject)
-    const formatedPost = JSON.stringify(newProject)
-    console.log(formatedPost);
-    // envoi du formulaire
-    // fetch("http://localhost:5678/api/works", {
-    //  method: "POST",
-    //  headers: { "Content-Type": "application/json" },
-    //  body: formatedPost
-    //});
-    //.then(response => {
-    // if (!response.ok) {
-    //  throw new Error(response.status);
-    // }
-    // return response.json();
-    //})
-    //.then(data => ** mise a jour de projects[]??? tbc {
-    //})
-    //.catch(error => {
-    //  alert("Problème lors de l'ajout de votre projet : " + error);
-    //});
-    //console.log(projects);
-    //console.log(newProject.category);
-    let catValue= "";
-    if (newProject.category = 1){
-      catValue = "Objets"
-    } else if (newProject.category = 2){
-      catValue = "Appartements"
-    } else if (newProject.category = 3) {
-      catValue = "Hotels & restaurants"
-    }
-    //console.log(catValue);
+
     const newObject = {
-      'category':{
+      'category': {
         'id': cat,
         'name': catValue
-        },
-      'id': projects.length+1,
+      },
+      'id': projects.length + 1,
       'categoryId': cat,
       'title': picTitle,
       'imageUrl': imgUrl,
       'userId': isAdmin
     };
-    //projects.push(newObject);
-    //showprojects(projects)
-    //dynamicModalContent(projects)
-
-    console.log(newObject);
-  }else {
-    alert('merci de bien vouloir renseigner les champs')
+   
+    projects.push(newObject);
+    showProjects(projects);
+    dynamicModalContent(projects);
+  } else {
+    alert('Merci de bien vouloir renseigner tous les champs.');
   }
-  
 }
 // retour arrière
 
@@ -412,6 +403,7 @@ function resetPic(){
     fontAwsomeDefault.style.display = 'flex';
     formatType.style.display= 'flex';
     customFileUpload.style.display= 'flex';
+    url = null;
   }else {
     return;
   }
@@ -419,7 +411,7 @@ function resetPic(){
 
 
 // function ajout d'une photo
-
+let url;
 function handleFileSelect(event) {
   const file = event.target.files[0];
   const previewImage = document.getElementById('previewImage');
@@ -429,12 +421,16 @@ function handleFileSelect(event) {
   if (file && file.type.match('image.*')) {
     const reader = new FileReader();
     reader.onload = function (e) {
+      const imgUrl = URL.createObjectURL(file);
+      url = imgUrl
       previewImage.src = e.target.result;
       previewImage.style.display = 'flex';
       fontAwsomeDefault.style.display = 'none';
       formatType.style.display= 'none';
       customFileUpload.style.display= 'none';
     };
+
+    
     reader.readAsDataURL(file);
     previewImage.addEventListener('click', function(){
       resetPic();
@@ -449,7 +445,7 @@ function handleFileSelect(event) {
 function deleteItem(projectID) {
   const confirmed = confirm("Voulez-vous vraiment supprimer ce projet?")
   if (confirmed) {
-    const updatedProjects = projects.filter(project => project.projectID !== projectID)
+    const updatedProjects = projects.filter(project => project.id !== projectID)
     projects = updatedProjects;
     showProjects(projects);
     dynamicModalContent(projects);
@@ -462,7 +458,13 @@ function deleteItem(projectID) {
 // format delete = ID ? http://localhost:5678/api/works/${projectID}
 function deleteItemApi(projectID) {
   fetch(`http://localhost:5678/api/works/${projectID}`, 
-  { method: 'DELETE' })
+  { 
+    method: 'DELETE',
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token,
+    }
+  })
     .then(async response => {
         const isJson = response.headers.get('content-type')?.includes('application/json');
         const data = isJson && await response.json();
@@ -480,18 +482,20 @@ function deleteItemApi(projectID) {
         alert(`Erreur: ${error}`);
         console.error('There was an error!', error);
     });
-
+    showProjects(projects);
+    dynamicModalContent(projects)
 }
 
 // ajout de la fonctionnalité deletAll
 
 function deleteAll() {
-  //console.log("delete all")
   const confirmed = confirm("Voulez-vous vraiment supprimer tous vos projets?")
   if(confirmed){
     for (let i = projects.length; i > 0; i--){
       const projectID = i;
-      deleteItem(projectID);
+      const updatedProjects = projects.filter(project => project.projectID !== projectID)
+      projects = updatedProjects;
+      deleteItemApi(projectID);
     }
     showProjects(projects);
     dynamicModalContent(projects);
