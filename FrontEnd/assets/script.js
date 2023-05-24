@@ -1,12 +1,16 @@
 // mes variables
-let projects;
+let projects = [];
 let isModalOpen = false;
 let isAdmin = 0;
+let file;
+let localUrl;
 // Récupération du token d'authentification
 const token = sessionStorage.getItem("token");
 const modalContainer = document.querySelector(".modal-container");
 const closeCross = document.querySelector(".close-modal-cross");
-
+// je cache l'un des boutons modifier au chargement 
+const hidden = document.querySelector('.hidden');
+hidden.style.display = 'none';
 // creation de la modale au chargement
 function createModal(){
   const target = document.querySelector("#modal");
@@ -46,6 +50,11 @@ editLinks.forEach(link => {
 
 // ouverture de la modale au click
 function openModal(event) {
+  //permutation des boutons modifier
+  const displayed = document.querySelector('.displayed');
+  displayed.style.display = 'none';
+  const hidden = document.querySelector('.hidden');
+  hidden.style.display = 'flex';
   event.stopPropagation(); // Empêche la fermeture immédiate de la modale
   // changement des attributs de la modale
   const target = document.querySelector("#modal");
@@ -87,6 +96,10 @@ function closeModal() {
     window.removeEventListener("click", outsideClick);
     closeCross.removeEventListener("click", outsideClick);
     isModalOpen = false;
+    const displayed = document.querySelector('.displayed');
+    displayed.style.display = 'flex';
+    const hidden = document.querySelector('.hidden');
+    hidden.style.display = 'none';
   } else {
     return;
   }
@@ -295,42 +308,37 @@ function addNewPic(){
   validateAdd.addEventListener('submit', function(e){
     e.preventDefault();
     const fileInput = document.getElementById('previewImage')
-    const imgUrl =  fileInput.src;  
-    // const imgUrl = url v1.5 erreur 500
+    const imgUrl =  fileToUpload; 
+    const localShow = localUrl
     const titleInput = document.getElementById('title');
     const picTitle = titleInput.value;    
     const catInput = document.getElementById('categories');
     const cat = catInput.value;    
-    createNewProject(imgUrl, picTitle, cat);
+    createNewProject(localShow, imgUrl, picTitle, cat);
+    
   })
 }
 
 // crea d'un nouveau projet avec validation des champs
-function createNewProject(imgUrl, picTitle, cat) {
-  if (imgUrl && picTitle && cat) {
+function createNewProject(localShow, imgUrl, picTitle, cat) {
+  if (localShow, imgUrl && picTitle && cat) {
 
 //v2 erreur 400
- /*   const formData = new FormData();
+  const formData = new FormData();
     formData.append('image', imgUrl);
     formData.append('title', picTitle);
     formData.append('category', cat);
-*/
-// v1 erreur 413
-    const newProject = {
-      "image": imgUrl,
-      "title": picTitle,
-      "category": cat
-    };
-    const formatedPost = JSON.stringify(newProject);
+
+   
 
     fetch("http://localhost:5678/api/works", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+       // "Content-Type": "application/json",
         "Authorization": "Bearer " + token,
       },
-      body: formatedPost
-      //body: formData
+      //body: formatedPost
+      body: formData
     })
       .then(response => {
         if (!response.ok) {
@@ -347,11 +355,11 @@ function createNewProject(imgUrl, picTitle, cat) {
       });
 
     let catValue = "";
-    if (newProject.category === 1) {
+    if (cat === 1) {
       catValue = "Objets";
-    } else if (newProject.category === 2) {
+    } else if (cat === 2) {
       catValue = "Appartements";
-    } else if (newProject.category === 3) {
+    } else if (cat === 3) {
       catValue = "Hotels & restaurants";
     }
 
@@ -363,13 +371,14 @@ function createNewProject(imgUrl, picTitle, cat) {
       'id': projects.length + 1,
       'categoryId': cat,
       'title': picTitle,
-      'imageUrl': imgUrl,
+      'imageUrl': localShow,
       'userId': isAdmin
     };
    
     projects.push(newObject);
     showProjects(projects);
     dynamicModalContent(projects);
+    
   } else {
     alert('Merci de bien vouloir renseigner tous les champs.');
   }
@@ -403,7 +412,7 @@ function resetPic(){
     fontAwsomeDefault.style.display = 'flex';
     formatType.style.display= 'flex';
     customFileUpload.style.display= 'flex';
-    url = null;
+    globalImgUrl = null;
   }else {
     return;
   }
@@ -411,7 +420,7 @@ function resetPic(){
 
 
 // function ajout d'une photo
-let url;
+
 function handleFileSelect(event) {
   const file = event.target.files[0];
   const previewImage = document.getElementById('previewImage');
@@ -421,16 +430,14 @@ function handleFileSelect(event) {
   if (file && file.type.match('image.*')) {
     const reader = new FileReader();
     reader.onload = function (e) {
-      const imgUrl = URL.createObjectURL(file);
-      url = imgUrl
+      fileToUpload = file;
+      localUrl = e.target.result;
       previewImage.src = e.target.result;
       previewImage.style.display = 'flex';
       fontAwsomeDefault.style.display = 'none';
       formatType.style.display= 'none';
       customFileUpload.style.display= 'none';
     };
-
-    
     reader.readAsDataURL(file);
     previewImage.addEventListener('click', function(){
       resetPic();

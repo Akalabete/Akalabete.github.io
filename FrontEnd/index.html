@@ -42,7 +42,7 @@
 		</figure>
 		<article>
 			<div class="magic">
-				<a class="js-modal"><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a>
+				<a class="js-modal hidden"><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a>
 			</div>
 			<h2>Designer d'espace</h2>
 			<p>Je raconte votre histoire, je valorise vos idées. Je vous accompagne de la conception à la livraison finale du chantier.</p>
@@ -98,7 +98,7 @@
 							</select>
 							<div class="greyline"></div>
 
-							<input type="submit"class="pic-send" value="Valider">
+							<input type="submit" id="pic-send" class="pic-send" value="Valider">
 						</form>
 					</div>					
 				</div>	
@@ -107,7 +107,11 @@
 		</aside>
 	</section>
 	<section id="portfolio">
-		<h2>Mes Projets</h2>
+		<div class="project-title">
+			<h2>Mes Projets</h2>
+			<a class="js-modal displayed "><i class="fa-sharp fa-regular fa-pen-to-square"></i>&nbspmodifier</a>
+		</div>
+		
 		<div class="filters">
 			<button class="show all">Tous</button>
 			<button class="show objects">Objets</button>
@@ -139,6 +143,7 @@
 		</ul>
 	</nav>
 </footer>
+<script src="./assets/script.js"></script>
 <script src="./assets/script.js"></script>
 </body>
 </html>

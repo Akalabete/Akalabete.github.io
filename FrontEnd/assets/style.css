@@ -183,6 +183,12 @@ li:hover,li a:hover {
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
+#categories{
+	margin-top: 10px;
+	height: 40px;	
+	border: none;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+} 
 
 #contact label {
 	margin: 2em 0 1em 0;
@@ -392,6 +398,7 @@ h3{
 
 .photo-add{
 	border:none;
+	padding: 10px;
 }
 
 /* ajout du header en mode admin */
@@ -434,6 +441,7 @@ h3{
 
 .input-file-container {
 	margin-top: 25px;
+	margin-bottom: 10px;
 	width: 100%;
 	min-height: 200px;
 	background-color: #E8F1F6;
@@ -495,6 +503,10 @@ h3{
 	height: 120px;
 }
 
+#pic-send {
+	background-color: #A7A7A7
+}
+
 
 #enlarge {
 	width: 100%;
@@ -527,4 +539,12 @@ h3{
 	position: absolute;
 	top: 5px;
 	right: 5px;
+}
+.project-title{
+	display: flex;
+	align-items:last baseline;
+	justify-content: center;;
+}
+.project-title a{
+	margin-left : 3%
 }
