@@ -49,13 +49,13 @@ editLinks.forEach(link => {
 });
 
 // ouverture de la modale au click
-function openModal(event) {
+function openModal() {
   //permutation des boutons modifier
   const displayed = document.querySelector('.displayed');
   displayed.style.display = 'none';
   const hidden = document.querySelector('.hidden');
   hidden.style.display = 'flex';
-  event.stopPropagation(); // Empêche la fermeture immédiate de la modale
+
   // changement des attributs de la modale
   const target = document.querySelector("#modal");
   target.setAttribute('style', 'display: flex');
@@ -253,9 +253,10 @@ function dynamicModalContent(projects){
     const projectEditionBtn = projectEditionBtns[j];
     let imgUrl= projects[j].imageUrl;
     let picTitle= projects[j].title;
-    let cat= projects[j].categoryId;
+    let cat= projects[j].categoryId;  
+    let projectID = projects[j].id;
     projectEditionBtn.addEventListener("click", function() {
-      modifyPic(imgUrl, picTitle, cat);
+     modifyPic(imgUrl, picTitle, cat, projectID);
     });
   }
   // ajout du listener sur le bouton trash
@@ -267,13 +268,12 @@ function dynamicModalContent(projects){
       deleteItem(projectID);
     })
   }
-}
-
-
+};
 // construction de la page d'édition du lien édit
-
-function modifyPic(imgUrl, picTitle, cat){
-  addNewPic();
+// recupère le projectID , crée un nouveau projet et supprime l'ancien
+// car impossible de changer l'item dans la bdd ??? a voir avec le backend
+function modifyPic(imgUrl, picTitle, cat, projectID){
+  constructModalTwo()
   const editTitle = document.querySelector('.modal-two-title');
   editTitle.innerText = "Edition de photo";
   const modPicBtn = document.querySelector('.custom-file-upload-span');
@@ -287,15 +287,23 @@ function modifyPic(imgUrl, picTitle, cat){
   title.value = picTitle;
   const category = document.getElementById("categories");
   category.value = cat;
-
-  // ajouter une conditionnelle sur la fonction addNewPic qui deleterait l'item a changer pour ajouter l'item changé
-  // car impossible de changer l'item dans la bdd ???
-}
-
+  const validateAdd = document.getElementById("addingNewPic");
+  validateAdd.addEventListener('submit', function(e){
+    e.preventDefault();
+    const imgUrl =  fileToUpload; 
+    const localShow = localUrl;
+    const titleInput = document.getElementById('title');
+    const picTitle = titleInput.value;    
+    const catInput = document.getElementById('categories');
+    const cat = catInput.value;    
+    createNewProject(localShow, imgUrl, picTitle, cat);
+    deleteItem(projectID);
+  });
+};
 
 //permutation entre les pages de la modale btn nouveau projet
 
-function addNewPic(){
+function constructModalTwo(){
   const backBtn = document.querySelector(".cancel-add");
   backBtn.setAttribute("style", "display: block");
   backBtn.addEventListener("click", printModalOne);
@@ -303,11 +311,16 @@ function addNewPic(){
   modalTwo.setAttribute("style", "display: block");
   const modalOne = document.querySelector(".one");
   modalOne.setAttribute("style", "display: none");
+}
+
+
+function addNewPic(){
+  constructModalTwo();
+  resetPic(); 
   // ajout d'un listener sur la page d'ajout
   const validateAdd = document.getElementById("addingNewPic");
   validateAdd.addEventListener('submit', function(e){
     e.preventDefault();
-    const fileInput = document.getElementById('previewImage')
     const imgUrl =  fileToUpload; 
     const localShow = localUrl
     const titleInput = document.getElementById('title');
@@ -315,29 +328,22 @@ function addNewPic(){
     const catInput = document.getElementById('categories');
     const cat = catInput.value;    
     createNewProject(localShow, imgUrl, picTitle, cat);
-    
   })
 }
 
 // crea d'un nouveau projet avec validation des champs
 function createNewProject(localShow, imgUrl, picTitle, cat) {
-  if (localShow, imgUrl && picTitle && cat) {
-
-//v2 erreur 400
+  if (localShow && imgUrl && picTitle && cat) {
   const formData = new FormData();
     formData.append('image', imgUrl);
     formData.append('title', picTitle);
     formData.append('category', cat);
-
-   
-
     fetch("http://localhost:5678/api/works", {
       method: "POST",
       headers: {
        // "Content-Type": "application/json",
         "Authorization": "Bearer " + token,
       },
-      //body: formatedPost
       body: formData
     })
       .then(response => {
@@ -385,7 +391,11 @@ function createNewProject(localShow, imgUrl, picTitle, cat) {
 }
 // retour arrière
 
-function printModalOne(){  
+function printModalOne(){ 
+  const editTitle = document.querySelector('.modal-two-title');
+  editTitle.innerText = "Ajout photo";
+  const modPicBtn = document.querySelector('.custom-file-upload-span');
+  modPicBtn.innerText = "+ Ajout photo";  
   const modalTwo = document.querySelector(".two");
   modalTwo.setAttribute("style", "display: none");
   const modalOne = document.querySelector(".one");
@@ -427,7 +437,7 @@ function handleFileSelect(event) {
   const fontAwsomeDefault = document.getElementById('enlarge');
   const formatType = document.querySelector('.format-type');
   const customFileUpload = document.querySelector('.custom-file-upload'); 
-  if (file && file.type.match('image.*')) {
+  if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
     const reader = new FileReader();
     reader.onload = function (e) {
       fileToUpload = file;
@@ -442,6 +452,13 @@ function handleFileSelect(event) {
     previewImage.addEventListener('click', function(){
       resetPic();
     })
+    // erreur de formats non reconnus ou trop gros 
+  }else if(file.size > Math.pow(1024, 2)*4){
+    alert("fichier trop volumineux");
+    resetPic();
+  }else if (file.type !== 'image/png' || file.type !== 'image/jpeg'){
+    alert("format de fichier non reconnu"); 
+    resetPic(); 
   } else {
     previewImage.style.display = 'none';
   }
@@ -457,12 +474,10 @@ function deleteItem(projectID) {
     showProjects(projects);
     dynamicModalContent(projects);
     deleteItemApi(projectID);
-
+    resetPic();
   }
 }
-
-
-// format delete = ID ? http://localhost:5678/api/works/${projectID}
+// fonction qui supprime dans l'api
 function deleteItemApi(projectID) {
   fetch(`http://localhost:5678/api/works/${projectID}`, 
   { 
@@ -475,14 +490,10 @@ function deleteItemApi(projectID) {
     .then(async response => {
         const isJson = response.headers.get('content-type')?.includes('application/json');
         const data = isJson && await response.json();
-
-        // check for error response
         if (!response.ok) {
-            // get error message from body or default to response status
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
         }
-
         alert('Projet supprimé!');
     })
     .catch(error => {
@@ -490,7 +501,7 @@ function deleteItemApi(projectID) {
         console.error('There was an error!', error);
     });
     showProjects(projects);
-    dynamicModalContent(projects)
+    dynamicModalContent(projects);
 }
 
 // ajout de la fonctionnalité deletAll
