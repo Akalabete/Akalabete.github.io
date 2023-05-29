@@ -494,6 +494,7 @@ function deleteItemApi(projectID) {
             const error = (data && data.message) || response.status;
             return Promise.reject(error);
         }
+        
         alert('Projet supprimé!');
     })
     .catch(error => {
@@ -513,10 +514,12 @@ function deleteAll() {
       const projectID = i;
       const updatedProjects = projects.filter(project => project.projectID !== projectID)
       projects = updatedProjects;
-      deleteItemApi(projectID);
+      deleteItemApi(projectID);      
     }
+    projects=[];
     showProjects(projects);
     dynamicModalContent(projects);
+    
   }else {
     return;
   }
