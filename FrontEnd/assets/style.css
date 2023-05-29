@@ -556,3 +556,8 @@ h3{
 .project-title a{
 	margin-left : 3%
 }
+
+.fa-xmark, .fa-arrow-left, #pic-send, .custom-file-upload, .fa-trash-can,
+.project-edit, .photo-add, .delete-gallery, .show {
+	cursor: pointer;
+}
